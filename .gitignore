@@ -1,0 +1,10 @@
+.venv/
+__pycache__/
+*.pyc
+.DS_Store
+faces.sqlite
+run_log.jsonl
+People/
+_Review/
+_Unsorted/
+_Other/

@@ -1,0 +1,18 @@
+input_dir: "~/Pictures/Incoming"
+output_dir: "./People"
+review_dir: "./_Review"
+unsorted_dir: "./_Unsorted"
+other_dir: "./_Other"
+db_path: "./faces.sqlite"
+
+device: cpu                           # cpu | coreml | cuda
+det_size: [640, 640]
+min_det_score: 0.5
+
+match_threshold: 0.50                 # cosine sim to count as a known person (TUNE)
+cluster_eps: 0.45                     # DBSCAN cosine distance (≈ 1 - sim) (TUNE)
+cluster_min_samples: 2
+
+placement: clone                      # clone | copy | move  (clone = APFS CoW)
+enroll_recognized: false
+max_embeddings_per_person: 20
