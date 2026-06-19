@@ -11,7 +11,7 @@ from .config import load_config
 from .db import (
     open_db, now_iso,
     load_known_embeddings, file_already_processed, record_processed_file,
-    get_person_by_name, delete_person, delete_processed_files_for_person,
+    get_person_by_name, get_person_by_id, delete_person, delete_processed_files_for_person,
     get_or_create_person, add_embedding, count_embeddings_for_person,
     get_lowest_det_score_embedding, delete_embedding,
     insert_pending_embedding, get_pending_embeddings,
@@ -302,14 +302,22 @@ def run_commit(cfg: dict):
     print(f"\nDone. {committed} group(s) committed, {skipped} still unlabeled (skipped).")
 
 
-def run_delete_person(cfg: dict, name: str, keep_files: bool):
+def run_delete_person(cfg: dict, name: str | None, person_id: int | None, keep_files: bool):
     conn = open_db(cfg["db_path"])
 
-    row = get_person_by_name(conn, name)
-    if not row:
-        print(f"Person '{name}' not found in database.")
-        conn.close()
-        return
+    if person_id is not None:
+        row = get_person_by_id(conn, person_id)
+        if not row:
+            print(f"No person with ID {person_id} found in database.")
+            conn.close()
+            return
+        name = row[1]
+    else:
+        row = get_person_by_name(conn, name)
+        if not row:
+            print(f"Person '{name}' not found in database.")
+            conn.close()
+            return
 
     person_id = row[0]
     emb_count = conn.execute(

@@ -88,6 +88,10 @@ def get_person_by_name(conn: sqlite3.Connection, name: str):
     return conn.execute("SELECT id, name FROM people WHERE name = ?", (name,)).fetchone()
 
 
+def get_person_by_id(conn: sqlite3.Connection, person_id: int):
+    return conn.execute("SELECT id, name FROM people WHERE id = ?", (person_id,)).fetchone()
+
+
 def delete_person(conn: sqlite3.Connection, person_id: int):
     conn.execute("DELETE FROM embeddings WHERE person_id = ?", (person_id,))
     conn.execute("DELETE FROM people WHERE id = ?", (person_id,))

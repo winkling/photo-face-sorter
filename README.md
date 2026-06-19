@@ -126,7 +126,7 @@ On the next scan, photos of already-labeled people route straight to `People/<na
 | `commit` | Enroll labeled review groups |
 | `prune [--max-size N]` | Move small unlabeled groups to `_Unsorted/` |
 | `list-people` | List all enrolled people with embedding counts |
-| `delete-person <name> [--keep-files]` | Remove a person and re-queue their photos |
+| `delete-person <--name NAME\|--id N> [--keep-files]` | Remove a person and re-queue their photos |
 | `status` | Show database and queue stats |
 
 ---

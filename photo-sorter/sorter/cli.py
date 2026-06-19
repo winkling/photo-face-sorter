@@ -33,7 +33,8 @@ def main():
 
     # delete-person
     del_p = sub.add_parser("delete-person", help="Remove a person and their data from the database")
-    del_p.add_argument("name", help="Exact person name to delete")
+    del_p.add_argument("--name", help="Exact person name to delete")
+    del_p.add_argument("--id", type=int, dest="person_id", help="Person ID to delete (alternative to --name)")
     del_p.add_argument("--keep-files", action="store_true",
                        help="Keep the People/<name>/ folder (default: delete it)")
 
@@ -64,7 +65,9 @@ def main():
         run_commit(cfg)
 
     elif args.command == "delete-person":
-        run_delete_person(cfg, name=args.name, keep_files=args.keep_files)
+        if not args.name and not args.person_id:
+            del_p.error("provide a name or --id")
+        run_delete_person(cfg, name=args.name, person_id=args.person_id, keep_files=args.keep_files)
 
     elif args.command == "prune":
         run_prune(cfg, max_size=args.max_size)

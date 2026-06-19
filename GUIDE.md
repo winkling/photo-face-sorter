@@ -189,10 +189,12 @@ Always moves files out of `_Review/` into their destination (`People/<name>/` or
 
 ```bash
 # Remove person from DB and delete their People/<name>/ folder
-.venv/bin/python -m sorter.cli delete-person Alice
+.venv/bin/python -m sorter.cli delete-person --name Alice
+.venv/bin/python -m sorter.cli delete-person --id 3
 
 # Remove from DB only, keep the folder
-.venv/bin/python -m sorter.cli delete-person Alice --keep-files
+.venv/bin/python -m sorter.cli delete-person --name Alice --keep-files
+.venv/bin/python -m sorter.cli delete-person --id 3 --keep-files
 ```
 
 Removes a person completely: deletes their embeddings and person record from the database, and re-queues their photos so the next `scan --apply` picks them up again as unknowns. By default also deletes `People/<name>/`; use `--keep-files` to leave it.
