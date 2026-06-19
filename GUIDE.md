@@ -199,6 +199,14 @@ Removes a person completely: deletes their embeddings and person record from the
 
 Requires typing the exact person name to confirm before anything is deleted.
 
+### `list-people`
+
+```bash
+.venv/bin/python -m sorter.cli list-people
+```
+
+Lists all enrolled people sorted alphabetically, showing their database ID, name, number of stored face embeddings, and enrollment date.
+
 ### `status`
 
 ```bash

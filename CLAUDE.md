@@ -112,6 +112,14 @@ Walks `_Review/` subfolders. Always **moves** files (not clone/copy).
 - **`_unsorted*` (any name starting with `_unsorted`)** → move photos to `_Unsorted/`, discard pending embeddings, delete folder. Multiple such folders allowed (e.g. `_unsorted`, `_unsorted 2`).
 - **Any other name** → treated as a person name. Merge-or-create the person, enroll pending embeddings (by `group_id`), also pick up embeddings for any photos manually moved in from other groups (matched by filename). Move photos to `People/<name>/`, delete folder.
 
+### `list-people`
+
+```bash
+.venv/bin/python -m sorter.cli list-people
+```
+
+Lists all enrolled people (DB id, name, embedding count, enrolled date), sorted alphabetically.
+
 ### `status`
 
 ```bash
