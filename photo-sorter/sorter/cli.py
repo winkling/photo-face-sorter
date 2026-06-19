@@ -3,7 +3,7 @@ import os
 import sys
 
 from .config import load_config
-from .pipeline import run_scan, run_commit, run_prune, run_delete_person, run_status
+from .pipeline import run_scan, run_commit, run_prune, run_delete_person, run_list_people, run_status
 
 
 def main():
@@ -42,6 +42,9 @@ def main():
     prune_p.add_argument("--max-size", type=int, default=2, metavar="N",
                          help="Move groups with ≤ N photos (default: 2)")
 
+    # list-people
+    sub.add_parser("list-people", help="List all enrolled people and their embedding counts")
+
     # status
     sub.add_parser("status", help="Show database and queue stats")
 
@@ -65,6 +68,9 @@ def main():
 
     elif args.command == "prune":
         run_prune(cfg, max_size=args.max_size)
+
+    elif args.command == "list-people":
+        run_list_people(cfg)
 
     elif args.command == "status":
         run_status(cfg)

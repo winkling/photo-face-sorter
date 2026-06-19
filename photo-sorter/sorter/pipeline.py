@@ -398,6 +398,29 @@ def run_prune(cfg: dict, max_size: int):
     print(f"\nDone. {pruned} small group(s) moved to _Unsorted/, {skipped} kept.")
 
 
+def run_list_people(cfg: dict):
+    conn = open_db(cfg["db_path"])
+    rows = conn.execute("""
+        SELECT p.id, p.name, p.created_at, COUNT(e.id) as emb_count
+        FROM people p
+        LEFT JOIN embeddings e ON e.person_id = p.id
+        GROUP BY p.id
+        ORDER BY p.name COLLATE NOCASE
+    """).fetchall()
+    conn.close()
+
+    if not rows:
+        print("No people enrolled yet.")
+        return
+
+    print(f"{'ID':<6} {'Name':<30} {'Embeddings':>10}  {'Enrolled'}")
+    print("-" * 65)
+    for pid, name, created_at, emb_count in rows:
+        date = created_at[:10] if created_at else "unknown"
+        print(f"{pid:<6} {name:<30} {emb_count:>10}  {date}")
+    print(f"\n{len(rows)} person(s) total.")
+
+
 def run_status(cfg: dict):
     conn = open_db(cfg["db_path"])
 
