@@ -6,6 +6,8 @@ from pillow_heif import register_heif_opener
 
 register_heif_opener()
 
+Image.MAX_IMAGE_PIXELS = None  # disable decompression bomb guard for local use
+
 SUPPORTED = {".jpg", ".jpeg", ".png", ".heic", ".heif"}
 
 
