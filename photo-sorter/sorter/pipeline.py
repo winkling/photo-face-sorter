@@ -337,9 +337,9 @@ def run_delete_person(cfg: dict, name: str | None, person_id: int | None, keep_f
     elif keep_files:
         print(f"  Folder:     {people_folder} (kept)")
 
-    confirm = input("\nType the person's name to confirm deletion: ").strip()
-    if confirm != name:
-        print("Cancelled — name did not match.")
+    confirm = input("\nDelete this person? [y/N]: ").strip().lower()
+    if confirm != "y":
+        print("Cancelled.")
         conn.close()
         return
 
