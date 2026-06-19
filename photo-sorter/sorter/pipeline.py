@@ -50,6 +50,7 @@ def run_scan(cfg: dict, input_dir: str, apply: bool):
     app = make_app(cfg["device"], cfg["det_size"])
 
     no_face = []
+    load_error = []  # (path, sha) — supported extension but failed to open
     known = []       # (path, person_id, person_name, emb, det_score, sim)
     unknown = []     # (path, prominent_emb, prominent_det_score, all_faces)
 
@@ -67,7 +68,8 @@ def run_scan(cfg: dict, input_dir: str, apply: bool):
         try:
             bgr = load_bgr(path)
         except Exception as e:
-            print(f"\n  WARN: could not load {path}: {e}")
+            print(f"\n  WARN: could not load {os.path.basename(path)}: {e}")
+            load_error.append((path, sha))
             continue
         faces = detect_faces(app, bgr, cfg["min_det_score"])
         if not faces:
@@ -102,6 +104,7 @@ def run_scan(cfg: dict, input_dir: str, apply: bool):
     for gid, cnt in sorted(group_counts.items()):
         print(f"    {gid}: {cnt} photo(s)")
     print(f"  No face:        {len(no_face)}")
+    print(f"  Load errors:    {len(load_error)} (corrupt/unreadable, will go to _Unsorted/)")
     print(f"  Other files:    {len(other_files)} (unsupported formats, will be copied to _Other/)")
 
     if not apply:
@@ -135,6 +138,13 @@ def run_scan(cfg: dict, input_dir: str, apply: bool):
 
     # no face → _Unsorted/
     for (path, sha) in no_face:
+        dst = os.path.join(unsorted_dir, os.path.basename(path))
+        place_file(path, dst, placement_mode)
+        record_processed_file(conn, sha, path, "no_face")
+        counts["no_face"] += 1
+
+    # load errors → _Unsorted/
+    for (path, sha) in load_error:
         dst = os.path.join(unsorted_dir, os.path.basename(path))
         place_file(path, dst, placement_mode)
         record_processed_file(conn, sha, path, "no_face")
