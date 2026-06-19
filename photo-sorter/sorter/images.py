@@ -17,23 +17,25 @@ def load_bgr(path: str) -> np.ndarray:
 
 
 def iter_images(directory: str):
-    for root, _, files in os.walk(directory):
-        for fname in sorted(files):
-            if fname.startswith("."):
-                continue
-            ext = os.path.splitext(fname)[1].lower()
-            if ext in SUPPORTED:
-                yield os.path.join(root, fname)
+    for fname in sorted(os.listdir(directory)):
+        if fname.startswith("."):
+            continue
+        path = os.path.join(directory, fname)
+        if not os.path.isfile(path):
+            continue
+        if os.path.splitext(fname)[1].lower() in SUPPORTED:
+            yield path
 
 
 def iter_other_files(directory: str):
-    for root, _, files in os.walk(directory):
-        for fname in sorted(files):
-            if fname.startswith("."):
-                continue
-            ext = os.path.splitext(fname)[1].lower()
-            if ext not in SUPPORTED:
-                yield os.path.join(root, fname)
+    for fname in sorted(os.listdir(directory)):
+        if fname.startswith("."):
+            continue
+        path = os.path.join(directory, fname)
+        if not os.path.isfile(path):
+            continue
+        if os.path.splitext(fname)[1].lower() not in SUPPORTED:
+            yield path
 
 
 def crop_face(bgr: np.ndarray, bbox, margin: float = 0.10) -> np.ndarray:
