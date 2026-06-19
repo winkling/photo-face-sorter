@@ -74,6 +74,12 @@ Each `_Review/group_XXXX/` folder contains the photos plus a `_faces/` subfolder
 
 Open `_Review/` in Finder and work through the `group_XXXX/` folders:
 
+**Many small groups not worth labeling** — use `prune`:
+```bash
+.venv/bin/python -m sorter.cli prune            # move groups with ≤ 2 photos
+.venv/bin/python -m sorter.cli prune --max-size 5
+```
+
 **Rename to a person's name:**
 ```
 _Review/group_0001/  →  _Review/Alice/
@@ -90,12 +96,6 @@ Rename: group_0001/ → Alice/
 ```
 _Review/group_0003/  →  _Review/_unsorted/
 _Review/group_0004/  →  _Review/_unsorted 2/
-```
-
-**Many small groups not worth labeling** — use `prune`:
-```bash
-.venv/bin/python -m sorter.cli prune            # move groups with ≤ 2 photos
-.venv/bin/python -m sorter.cli prune --max-size 5
 ```
 
 Unlabeled `group_XXXX/` folders are skipped and left for next time.
