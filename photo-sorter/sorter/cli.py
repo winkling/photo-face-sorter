@@ -3,7 +3,7 @@ import os
 import sys
 
 from .config import load_config
-from .pipeline import run_scan, run_commit, run_status
+from .pipeline import run_scan, run_commit, run_prune, run_status
 
 
 def main():
@@ -27,6 +27,11 @@ def main():
     # commit
     sub.add_parser("commit", help="Enroll labeled review groups")
 
+    # prune
+    prune_p = sub.add_parser("prune", help="Move small unlabeled groups to _Unsorted")
+    prune_p.add_argument("--max-size", type=int, default=2, metavar="N",
+                         help="Move groups with ≤ N photos (default: 2)")
+
     # status
     sub.add_parser("status", help="Show database and queue stats")
 
@@ -44,6 +49,9 @@ def main():
 
     elif args.command == "commit":
         run_commit(cfg)
+
+    elif args.command == "prune":
+        run_prune(cfg, max_size=args.max_size)
 
     elif args.command == "status":
         run_status(cfg)

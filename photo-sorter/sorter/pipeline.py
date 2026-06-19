@@ -301,6 +301,56 @@ def run_commit(cfg: dict):
     print(f"\nDone. {committed} group(s) committed, {skipped} still unlabeled (skipped).")
 
 
+def run_prune(cfg: dict, max_size: int):
+    review_dir = cfg["review_dir"]
+    unsorted_dir = cfg["unsorted_dir"]
+    conn = open_db(cfg["db_path"])
+
+    if not os.path.isdir(review_dir):
+        print("No _Review directory found.")
+        conn.close()
+        return
+
+    pruned = 0
+    skipped = 0
+
+    for folder_name in sorted(os.listdir(review_dir)):
+        folder_path = os.path.join(review_dir, folder_name)
+        if not os.path.isdir(folder_path):
+            continue
+        if not _GROUP_RE.match(folder_name):
+            skipped += 1
+            continue
+
+        photos = [
+            f for f in os.listdir(folder_path)
+            if not f.startswith(".") and f != "_faces"
+            and os.path.isfile(os.path.join(folder_path, f))
+        ]
+        if len(photos) > max_size:
+            skipped += 1
+            continue
+
+        marker_path = os.path.join(folder_path, ".photosort-group.json")
+        if os.path.exists(marker_path):
+            with open(marker_path) as f:
+                group_id = json.load(f)["group_id"]
+            delete_pending_embeddings(conn, group_id)
+
+        os.makedirs(unsorted_dir, exist_ok=True)
+        for fname in photos:
+            shutil.move(os.path.join(folder_path, fname), os.path.join(unsorted_dir, fname))
+
+        shutil.rmtree(folder_path)
+        pruned += 1
+        print(f"  Pruned {folder_name} ({len(photos)} photo(s)) → _Unsorted/")
+
+    conn.commit()
+    conn.close()
+
+    print(f"\nDone. {pruned} small group(s) moved to _Unsorted/, {skipped} kept.")
+
+
 def run_status(cfg: dict):
     conn = open_db(cfg["db_path"])
 
