@@ -136,12 +136,14 @@ On the next run, photos of people you've already labeled go straight to `People/
 
 ## Commands
 
-### `scan [INPUT_DIR] [--apply]`
+### `scan [INPUT_DIR] [--apply] [--force] [--recursive]`
 
 | Argument | Description |
 |---|---|
 | `INPUT_DIR` | Override the input directory from config (optional) |
 | `--apply` | Actually place files; without it, only a summary is printed |
+| `--force` | Re-process files even if already processed |
+| `--recursive` | Include files in subfolders of the input directory |
 
 ```bash
 # Dry run on config input_dir
@@ -153,9 +155,15 @@ On the next run, photos of people you've already labeled go straight to `People/
 # Apply
 .venv/bin/python -m sorter.cli scan --apply
 .venv/bin/python -m sorter.cli scan ~/Downloads/Photos --apply
+
+# Apply including subfolders
+.venv/bin/python -m sorter.cli scan --apply --recursive
+
+# Re-process everything from scratch
+.venv/bin/python -m sorter.cli scan --apply --force
 ```
 
-Runs are **idempotent** — files already processed (tracked by content hash) are skipped even if renamed or duplicated.
+Runs are **idempotent** — files already processed (tracked by content hash) are skipped even if renamed or duplicated. Use `--force` to override this.
 
 ### `prune [--max-size N]`
 

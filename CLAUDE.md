@@ -80,19 +80,21 @@ Four tables in `faces.sqlite`:
 
 ## Commands
 
-### `scan [INPUT_DIR] [--apply]`
+### `scan [INPUT_DIR] [--apply] [--force] [--recursive]`
 
 ```bash
 .venv/bin/python -m sorter.cli scan
 .venv/bin/python -m sorter.cli scan ~/Pictures/Incoming --apply
+.venv/bin/python -m sorter.cli scan --apply --recursive   # include subfolders
+.venv/bin/python -m sorter.cli scan --apply --force       # re-process already-processed files
 ```
 
 **Without `--apply`** — dry run, prints summary only, nothing written.
 
 **With `--apply`:**
 1. Copies unsupported file types (non-image) to `_Other/`.
-2. For each supported image not already in `processed_files` (by SHA-256):
-   - No faces → `_Unsorted/`
+2. For each supported image not already in `processed_files` (by SHA-256), skipped unless `--force`:
+   - No faces / load error → `_Unsorted/`
    - Known face (cosine sim ≥ `match_threshold`) → `People/<name>/`
    - Unknown face → collected for DBSCAN clustering → `_Review/group_XXXX/`
 3. Unknown groups get: photos placed, face crops in `_faces/`, marker `.photosort-group.json`, embeddings in `pending_embeddings`.
