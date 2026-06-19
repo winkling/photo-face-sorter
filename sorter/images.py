@@ -19,6 +19,8 @@ def load_bgr(path: str) -> np.ndarray:
 def iter_images(directory: str):
     for root, _, files in os.walk(directory):
         for fname in sorted(files):
+            if fname.startswith("."):
+                continue
             ext = os.path.splitext(fname)[1].lower()
             if ext in SUPPORTED:
                 yield os.path.join(root, fname)
@@ -27,6 +29,8 @@ def iter_images(directory: str):
 def iter_other_files(directory: str):
     for root, _, files in os.walk(directory):
         for fname in sorted(files):
+            if fname.startswith("."):
+                continue
             ext = os.path.splitext(fname)[1].lower()
             if ext not in SUPPORTED:
                 yield os.path.join(root, fname)
