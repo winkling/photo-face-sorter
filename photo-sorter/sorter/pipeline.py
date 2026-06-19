@@ -44,7 +44,7 @@ def _enroll_embedding(conn, person_id: int, vec: np.ndarray, source_path: str,
             add_embedding(conn, person_id, vec, source_path, det_score)
 
 
-def run_scan(cfg: dict, input_dir: str, apply: bool):
+def run_scan(cfg: dict, input_dir: str, apply: bool, force: bool = False):
     conn = open_db(cfg["db_path"])
     mat, person_ids, person_names = load_known_embeddings(conn)
 
@@ -63,7 +63,7 @@ def run_scan(cfg: dict, input_dir: str, apply: bool):
     for i, path in enumerate(images, 1):
         print(f"\r  [{i}/{total}] {os.path.basename(path)[:50]}\033[K", end="", flush=True)
         sha = sha256_file(path)
-        if file_already_processed(conn, sha):
+        if not force and file_already_processed(conn, sha):
             skipped += 1
             continue
         try:

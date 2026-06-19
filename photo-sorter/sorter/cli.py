@@ -23,6 +23,8 @@ def main():
                         help="Input directory (overrides config)")
     scan_p.add_argument("--apply", action="store_true",
                         help="Actually place files (default is dry run)")
+    scan_p.add_argument("--force", action="store_true",
+                        help="Re-process files even if already processed")
 
     # commit
     sub.add_parser("commit", help="Enroll labeled review groups")
@@ -51,7 +53,7 @@ def main():
         if not os.path.isdir(input_dir):
             print(f"ERROR: input directory does not exist: {input_dir}", file=sys.stderr)
             sys.exit(1)
-        run_scan(cfg, input_dir, apply=args.apply)
+        run_scan(cfg, input_dir, apply=args.apply, force=args.force)
 
     elif args.command == "commit":
         run_commit(cfg)
