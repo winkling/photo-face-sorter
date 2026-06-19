@@ -1,4 +1,9 @@
+import warnings
 from insightface.app import FaceAnalysis
+
+# insightface uses a deprecated scikit-image API internally; suppress until they fix it
+warnings.filterwarnings("ignore", message=".*estimate.*deprecated.*", category=FutureWarning,
+                        module="insightface")
 
 PROVIDERS = {
     "cpu":    ["CPUExecutionProvider"],
