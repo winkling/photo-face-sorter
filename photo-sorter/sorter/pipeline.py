@@ -102,7 +102,7 @@ def run_scan(cfg: dict, input_dir: str, apply: bool):
     print(f"  Skipped:        {skipped} (already processed)")
     print(f"  Auto-sorted:    {len(known)} (known people)")
     print(f"  New groups:     {len(group_counts)} groups from {len(unknown)} unknown photos")
-    for gid, cnt in sorted(group_counts.items()):
+    for gid, cnt in sorted(group_counts.items(), key=lambda x: x[1], reverse=True):
         print(f"    {gid}: {cnt} photo(s)")
     print(f"  No face:        {len(no_face)}")
     print(f"  Load errors:    {len(load_error)} (corrupt/unreadable, will go to _Unsorted/)")
