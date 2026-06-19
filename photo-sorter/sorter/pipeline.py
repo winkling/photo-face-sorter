@@ -59,7 +59,7 @@ def run_scan(cfg: dict, input_dir: str, apply: bool):
     skipped = 0
 
     for i, path in enumerate(images, 1):
-        print(f"\r  [{i}/{total}] {os.path.basename(path)[:50]}", end="", flush=True)
+        print(f"\r  [{i}/{total}] {os.path.basename(path)[:50]}\033[K", end="", flush=True)
         sha = sha256_file(path)
         if file_already_processed(conn, sha):
             skipped += 1
