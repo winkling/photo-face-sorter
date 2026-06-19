@@ -24,7 +24,7 @@ photo-sorter/
     __init__.py
     config.py          # load/validate config.yaml, expand ~ in paths
     db.py              # SQLite layer — open_db, all CRUD helpers, embedding serialization
-    images.py          # load_bgr (JPEG/PNG/HEIC + EXIF), iter_images, iter_other_files, crop_face
+    images.py          # load_bgr (JPEG/PNG/WebP/BMP/HEIC + EXIF), iter_images, iter_other_files, crop_face
     detect.py          # InsightFace buffalo_l wrapper — make_app, detect_faces, prominent_face
     match.py           # cosine dot-product match against known-people matrix
     cluster.py         # DBSCAN clustering + noise→singleton group assignment
