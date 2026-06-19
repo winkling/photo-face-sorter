@@ -56,7 +56,7 @@ All commands are run from inside the `photo-sorter/` directory.
 
 **1. Install dependencies (first time only)**
 ```bash
-.venv/bin/pip install onnxruntime insightface pillow-heif numpy scikit-learn pyyaml opencv-python-headless
+.venv/bin/pip install -r requirements.txt
 ```
 
 The face-recognition model (`buffalo_l`) downloads automatically on the first `scan` run — requires internet access that one time only.

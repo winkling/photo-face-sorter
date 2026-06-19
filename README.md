@@ -30,7 +30,7 @@ After a few runs, almost all photos sort themselves.
 ```bash
 cd photo-sorter
 python3 -m venv .venv
-.venv/bin/pip install onnxruntime insightface pillow-heif numpy scikit-learn pyyaml opencv-python-headless
+.venv/bin/pip install -r requirements.txt
 ```
 
 Then edit `config.yaml` and set `input_dir` to your photos folder:
