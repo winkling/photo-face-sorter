@@ -34,6 +34,15 @@ _Review/group_0003/  →  _Review/_unsorted/
 _Review/group_0004/  →  _Review/_unsorted 2/
 ```
 
+**Move many small groups to `_Unsorted` at once** — use `prune` before committing:
+```bash
+# Move all unlabeled groups with ≤ 2 photos (default)
+.venv/bin/python -m sorter.cli prune
+
+# Or set your own threshold
+.venv/bin/python -m sorter.cli prune --max-size 5
+```
+
 Once done labeling, commit:
 ```bash
 .venv/bin/python -m sorter.cli commit
