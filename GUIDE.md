@@ -104,6 +104,8 @@ _Review/group_0002/  →  _Review/Bob/
 
 **If you want to discard a group entirely** (don't need the photos at all): delete the folder. Originals are never touched — only clones live in `_Review/`.
 
+**If many small groups have only a handful of photos and aren't worth labeling:** use the `prune` command instead of renaming them one by one (see below).
+
 Leave any `group_XXXX/` folders you haven't decided on yet — they'll be skipped on commit.
 
 ### Step 4 — Commit
@@ -145,6 +147,18 @@ On the next run, photos of people you've already labeled go straight to `People/
 ```
 
 Runs are **idempotent** — files already processed (tracked by content hash) are skipped even if renamed or duplicated.
+
+### `prune [--max-size N]`
+
+```bash
+# Move all unlabeled groups with ≤ 2 photos to _Unsorted/ (default)
+.venv/bin/python -m sorter.cli prune
+
+# Move all unlabeled groups with ≤ 5 photos
+.venv/bin/python -m sorter.cli prune --max-size 5
+```
+
+Scans `_Review/` for unlabeled `group_XXXX/` folders and moves any with ≤ N photos directly to `_Unsorted/`, discarding their pending embeddings. Useful when many singleton or small groups aren't worth labeling. Only affects unlabeled groups — any folder you've already renamed is left alone.
 
 ### `commit`
 
