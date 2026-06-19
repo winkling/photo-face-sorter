@@ -4,6 +4,8 @@ photo-sorter/__pycache__/
 photo-sorter/sorter/__pycache__/
 photo-sorter/**/*.pyc
 photo-sorter/faces.sqlite
+photo-sorter/faces.sqlite-shm
+photo-sorter/faces.sqlite-wal
 photo-sorter/run_log.jsonl
 photo-sorter/People/
 photo-sorter/_Review/
