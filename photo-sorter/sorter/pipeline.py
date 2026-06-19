@@ -11,6 +11,7 @@ from .config import load_config
 from .db import (
     open_db, now_iso,
     load_known_embeddings, file_already_processed, record_processed_file,
+    get_person_by_name, delete_person, delete_processed_files_for_person,
     get_or_create_person, add_embedding, count_embeddings_for_person,
     get_lowest_det_score_embedding, delete_embedding,
     insert_pending_embedding, get_pending_embeddings,
@@ -299,6 +300,52 @@ def run_commit(cfg: dict):
 
     _log_run(cfg, {"command": "commit", "committed": committed, "skipped_unlabeled": skipped})
     print(f"\nDone. {committed} group(s) committed, {skipped} still unlabeled (skipped).")
+
+
+def run_delete_person(cfg: dict, name: str, keep_files: bool):
+    conn = open_db(cfg["db_path"])
+
+    row = get_person_by_name(conn, name)
+    if not row:
+        print(f"Person '{name}' not found in database.")
+        conn.close()
+        return
+
+    person_id = row[0]
+    emb_count = conn.execute(
+        "SELECT COUNT(*) FROM embeddings WHERE person_id = ?", (person_id,)
+    ).fetchone()[0]
+    file_count = conn.execute(
+        "SELECT COUNT(*) FROM processed_files WHERE result = ?", (f"person:{name}",)
+    ).fetchone()[0]
+
+    print(f"  Person:     {name}")
+    print(f"  Embeddings: {emb_count}")
+    print(f"  Processed files to re-queue: {file_count}")
+
+    people_folder = os.path.join(cfg["output_dir"], name)
+    if not keep_files and os.path.isdir(people_folder):
+        print(f"  Folder:     {people_folder} (will be deleted)")
+    elif keep_files:
+        print(f"  Folder:     {people_folder} (kept)")
+
+    confirm = input("\nType the person's name to confirm deletion: ").strip()
+    if confirm != name:
+        print("Cancelled — name did not match.")
+        conn.close()
+        return
+
+    delete_person(conn, person_id)
+    delete_processed_files_for_person(conn, name)
+    conn.commit()
+    conn.close()
+
+    if not keep_files and os.path.isdir(people_folder):
+        shutil.rmtree(people_folder)
+        print(f"  Deleted folder: {people_folder}")
+
+    print(f"\nDone. '{name}' removed from database. "
+          f"Their {file_count} photo(s) will be re-queued on the next scan.")
 
 
 def run_prune(cfg: dict, max_size: int):

@@ -84,6 +84,19 @@ def record_processed_file(conn: sqlite3.Connection, sha256: str, path: str, resu
     )
 
 
+def get_person_by_name(conn: sqlite3.Connection, name: str):
+    return conn.execute("SELECT id, name FROM people WHERE name = ?", (name,)).fetchone()
+
+
+def delete_person(conn: sqlite3.Connection, person_id: int):
+    conn.execute("DELETE FROM embeddings WHERE person_id = ?", (person_id,))
+    conn.execute("DELETE FROM people WHERE id = ?", (person_id,))
+
+
+def delete_processed_files_for_person(conn: sqlite3.Connection, name: str):
+    conn.execute("DELETE FROM processed_files WHERE result = ?", (f"person:{name}",))
+
+
 def get_or_create_person(conn: sqlite3.Connection, name: str) -> int:
     row = conn.execute("SELECT id FROM people WHERE name = ?", (name,)).fetchone()
     if row:

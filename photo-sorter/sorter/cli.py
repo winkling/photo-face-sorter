@@ -3,7 +3,7 @@ import os
 import sys
 
 from .config import load_config
-from .pipeline import run_scan, run_commit, run_prune, run_status
+from .pipeline import run_scan, run_commit, run_prune, run_delete_person, run_status
 
 
 def main():
@@ -27,6 +27,12 @@ def main():
     # commit
     sub.add_parser("commit", help="Enroll labeled review groups")
 
+    # delete-person
+    del_p = sub.add_parser("delete-person", help="Remove a person and their data from the database")
+    del_p.add_argument("name", help="Exact person name to delete")
+    del_p.add_argument("--keep-files", action="store_true",
+                       help="Keep the People/<name>/ folder (default: delete it)")
+
     # prune
     prune_p = sub.add_parser("prune", help="Move small unlabeled groups to _Unsorted")
     prune_p.add_argument("--max-size", type=int, default=2, metavar="N",
@@ -49,6 +55,9 @@ def main():
 
     elif args.command == "commit":
         run_commit(cfg)
+
+    elif args.command == "delete-person":
+        run_delete_person(cfg, name=args.name, keep_files=args.keep_files)
 
     elif args.command == "prune":
         run_prune(cfg, max_size=args.max_size)
