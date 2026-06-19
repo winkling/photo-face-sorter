@@ -177,6 +177,20 @@ Scans `_Review/` for unlabeled `group_XXXX/` folders and moves any with ≤ N ph
 
 Always moves files out of `_Review/` into their destination (`People/<name>/` or `_Unsorted/`). Photos that cannot be processed are left in `_Review/` untouched.
 
+### `delete-person <name> [--keep-files]`
+
+```bash
+# Remove person from DB and delete their People/<name>/ folder
+.venv/bin/python -m sorter.cli delete-person Alice
+
+# Remove from DB only, keep the folder
+.venv/bin/python -m sorter.cli delete-person Alice --keep-files
+```
+
+Removes a person completely: deletes their embeddings and person record from the database, and re-queues their photos so the next `scan --apply` picks them up again as unknowns. By default also deletes `People/<name>/`; use `--keep-files` to leave it.
+
+Requires typing the exact person name to confirm before anything is deleted.
+
 ### `status`
 
 ```bash
@@ -283,3 +297,4 @@ EXIF orientation is applied automatically, so sideways phone photos are handled 
 - **Multiple people in a photo:** the photo is routed to the folder of the largest (most prominent) face. The other faces are still recorded for recognition — those people become recognisable in other photos.
 - **Originals are never moved** unless you set `placement: move`. Everything in `People/` and `_Review/` is a clone or copy.
 - **Run `status` after `scan --apply`** to see a quick summary of what's waiting in review before opening Finder.
+- **Incorrect person / want to start over:** use `delete-person <name>` to wipe their embeddings and re-queue their photos. On the next scan they'll appear in `_Review/` as unknowns again.
