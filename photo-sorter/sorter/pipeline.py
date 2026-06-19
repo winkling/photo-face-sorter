@@ -44,7 +44,7 @@ def _enroll_embedding(conn, person_id: int, vec: np.ndarray, source_path: str,
             add_embedding(conn, person_id, vec, source_path, det_score)
 
 
-def run_scan(cfg: dict, input_dir: str, apply: bool, force: bool = False):
+def run_scan(cfg: dict, input_dir: str, apply: bool, force: bool = False, recursive: bool = False):
     conn = open_db(cfg["db_path"])
     mat, person_ids, person_names = load_known_embeddings(conn)
 
@@ -55,8 +55,8 @@ def run_scan(cfg: dict, input_dir: str, apply: bool, force: bool = False):
     known = []       # (path, person_id, person_name, emb, det_score, sim)
     unknown = []     # (path, prominent_emb, prominent_det_score, all_faces)
 
-    other_files = list(iter_other_files(input_dir))
-    images = list(iter_images(input_dir))
+    other_files = list(iter_other_files(input_dir, recursive=recursive))
+    images = list(iter_images(input_dir, recursive=recursive))
     total = len(images)
     skipped = 0
 

@@ -18,26 +18,46 @@ def load_bgr(path: str) -> np.ndarray:
     return cv2.cvtColor(np.asarray(img), cv2.COLOR_RGB2BGR)
 
 
-def iter_images(directory: str):
-    for fname in sorted(os.listdir(directory)):
-        if fname.startswith("."):
-            continue
-        path = os.path.join(directory, fname)
-        if not os.path.isfile(path):
-            continue
-        if os.path.splitext(fname)[1].lower() in SUPPORTED:
-            yield path
+def iter_images(directory: str, recursive: bool = False):
+    if recursive:
+        for root, dirs, files in os.walk(directory):
+            dirs[:] = [d for d in sorted(dirs) if not d.startswith(".")]
+            for fname in sorted(files):
+                if fname.startswith("."):
+                    continue
+                path = os.path.join(root, fname)
+                if os.path.splitext(fname)[1].lower() in SUPPORTED:
+                    yield path
+    else:
+        for fname in sorted(os.listdir(directory)):
+            if fname.startswith("."):
+                continue
+            path = os.path.join(directory, fname)
+            if not os.path.isfile(path):
+                continue
+            if os.path.splitext(fname)[1].lower() in SUPPORTED:
+                yield path
 
 
-def iter_other_files(directory: str):
-    for fname in sorted(os.listdir(directory)):
-        if fname.startswith("."):
-            continue
-        path = os.path.join(directory, fname)
-        if not os.path.isfile(path):
-            continue
-        if os.path.splitext(fname)[1].lower() not in SUPPORTED:
-            yield path
+def iter_other_files(directory: str, recursive: bool = False):
+    if recursive:
+        for root, dirs, files in os.walk(directory):
+            dirs[:] = [d for d in sorted(dirs) if not d.startswith(".")]
+            for fname in sorted(files):
+                if fname.startswith("."):
+                    continue
+                path = os.path.join(root, fname)
+                if os.path.splitext(fname)[1].lower() not in SUPPORTED:
+                    yield path
+    else:
+        for fname in sorted(os.listdir(directory)):
+            if fname.startswith("."):
+                continue
+            path = os.path.join(directory, fname)
+            if not os.path.isfile(path):
+                continue
+            if os.path.splitext(fname)[1].lower() not in SUPPORTED:
+                yield path
 
 
 def crop_face(bgr: np.ndarray, bbox, margin: float = 0.10) -> np.ndarray:

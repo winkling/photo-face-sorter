@@ -25,6 +25,8 @@ def main():
                         help="Actually place files (default is dry run)")
     scan_p.add_argument("--force", action="store_true",
                         help="Re-process files even if already processed")
+    scan_p.add_argument("--recursive", action="store_true",
+                        help="Include files in subfolders of the input directory")
 
     # commit
     sub.add_parser("commit", help="Enroll labeled review groups")
@@ -53,7 +55,7 @@ def main():
         if not os.path.isdir(input_dir):
             print(f"ERROR: input directory does not exist: {input_dir}", file=sys.stderr)
             sys.exit(1)
-        run_scan(cfg, input_dir, apply=args.apply, force=args.force)
+        run_scan(cfg, input_dir, apply=args.apply, force=args.force, recursive=args.recursive)
 
     elif args.command == "commit":
         run_commit(cfg)
