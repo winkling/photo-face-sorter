@@ -147,7 +147,7 @@ Prints: known people, stored embeddings, processed files, last run time, per-gro
 ## Dependencies
 
 ```
-pip install onnxruntime insightface pillow-heif numpy scikit-learn pyyaml opencv-python-headless
+pip install -r requirements.txt
 ```
 
 `buffalo_l` model downloads on first `scan` run (requires internet once).
