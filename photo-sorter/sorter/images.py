@@ -8,7 +8,7 @@ register_heif_opener()
 
 Image.MAX_IMAGE_PIXELS = None  # disable decompression bomb guard for local use
 
-SUPPORTED = {".jpg", ".jpeg", ".png", ".heic", ".heif"}
+SUPPORTED = {".jpg", ".jpeg", ".png", ".heic", ".heif", ".webp", ".bmp"}
 
 
 def load_bgr(path: str) -> np.ndarray:

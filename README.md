@@ -133,7 +133,7 @@ On the next scan, photos of already-labeled people route straight to `People/<na
 
 ## Supported formats
 
-JPEG, PNG, iPhone HEIC. EXIF orientation is applied automatically.
+JPEG, PNG, WebP, BMP, iPhone HEIC. EXIF orientation is applied automatically.
 
 ---
 

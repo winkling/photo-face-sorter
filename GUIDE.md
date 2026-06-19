@@ -299,7 +299,7 @@ If **the same person is appearing in too many separate groups**:
 
 ## Supported Formats
 
-JPEG (`.jpg`, `.jpeg`), PNG (`.png`), iPhone HEIC (`.heic`, `.heif`).
+JPEG (`.jpg`, `.jpeg`), PNG (`.png`), WebP (`.webp`), BMP (`.bmp`), iPhone HEIC (`.heic`, `.heif`).
 
 EXIF orientation is applied automatically, so sideways phone photos are handled correctly.
 
