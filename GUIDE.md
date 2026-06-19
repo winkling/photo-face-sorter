@@ -16,6 +16,15 @@ A local tool that sorts photos into per-person folders using face recognition. I
 
 Open `_Review/` in Finder. Each `group_XXXX/` folder is a cluster of unknown faces. Look at `_faces/` inside each group for cropped thumbnails to identify the person. Then:
 
+**Move many small groups to `_Unsorted` at once** — use `prune` before committing:
+```bash
+# Move all unlabeled groups with ≤ 2 photos (default)
+.venv/bin/python -m sorter.cli prune
+
+# Or set your own threshold
+.venv/bin/python -m sorter.cli prune --max-size 5
+```
+
 **Label a group** — rename the folder to the person's name:
 ```
 _Review/group_0001/  →  _Review/Alice/
@@ -32,15 +41,6 @@ Rename group_0001/ → Alice/
 ```
 _Review/group_0003/  →  _Review/_unsorted/
 _Review/group_0004/  →  _Review/_unsorted 2/
-```
-
-**Move many small groups to `_Unsorted` at once** — use `prune` before committing:
-```bash
-# Move all unlabeled groups with ≤ 2 photos (default)
-.venv/bin/python -m sorter.cli prune
-
-# Or set your own threshold
-.venv/bin/python -m sorter.cli prune --max-size 5
 ```
 
 Once done labeling, commit:
