@@ -80,18 +80,19 @@ Four tables in `faces.sqlite`:
 
 ## Commands
 
-### `scan [INPUT_DIR] [--apply] [--force] [--recursive]`
+### `scan [INPUT_DIR] [--dry-run] [--force] [--recursive]`
 
 ```bash
 .venv/bin/python -m sorter.cli scan
-.venv/bin/python -m sorter.cli scan ~/Pictures/Incoming --apply
-.venv/bin/python -m sorter.cli scan --apply --recursive   # include subfolders
-.venv/bin/python -m sorter.cli scan --apply --force       # re-process already-processed files
+.venv/bin/python -m sorter.cli scan ~/Pictures/Incoming
+.venv/bin/python -m sorter.cli scan --recursive   # include subfolders
+.venv/bin/python -m sorter.cli scan --force       # re-process already-processed files
+.venv/bin/python -m sorter.cli scan --dry-run     # preview only, nothing written
 ```
 
-**Without `--apply`** — dry run, prints summary only, nothing written.
+**With `--dry-run`** — prints summary only, nothing written.
 
-**With `--apply`:**
+**Without `--dry-run` (default):**
 1. Copies unsupported file types (non-image) to `_Other/`.
 2. For each supported image not already in `processed_files` (by SHA-256), skipped unless `--force`:
    - No faces / load error → `_Unsorted/`

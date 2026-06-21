@@ -7,11 +7,11 @@ A local tool that sorts photos into per-person folders using face recognition. I
 ## Quick Start
 
 ```bash
-# 1. Dry run — preview only, nothing written to disk
+# Detect faces and place files
 .venv/bin/python -m sorter.cli scan ~/Pictures/Incoming
 
-# 2. Apply — detect faces and place files
-.venv/bin/python -m sorter.cli scan ~/Pictures/Incoming --apply
+# Preview only — nothing written to disk
+.venv/bin/python -m sorter.cli scan ~/Pictures/Incoming --dry-run
 ```
 
 Open `_Review/` in Finder. Each `group_XXXX/` folder is a cluster of unknown faces. Look at `_faces/` inside each group for cropped thumbnails to identify the person. Then:
@@ -74,30 +74,23 @@ All other defaults are sensible to start. See [Configuration](#configuration) fo
 
 ## Basic Workflow
 
-### Step 1 — Dry run (preview only)
+### Step 1 — Scan and place files
 ```bash
 # Uses input_dir from config.yaml
 .venv/bin/python -m sorter.cli scan
 
-# Or specify a folder directly on the command line
-.venv/bin/python -m sorter.cli scan ~/Pictures/Incoming
-```
-Prints a summary of what would happen: how many photos match known people, how many new groups were found, how many have no face. **Nothing is written to disk.**
-
-### Step 2 — Apply
-```bash
-# Uses input_dir from config.yaml
-.venv/bin/python -m sorter.cli scan --apply
-
 # Or specify a folder directly
-.venv/bin/python -m sorter.cli scan ~/Pictures/Incoming --apply
+.venv/bin/python -m sorter.cli scan ~/Pictures/Incoming
+
+# Preview only — nothing written to disk
+.venv/bin/python -m sorter.cli scan --dry-run
 ```
 Processes photos and places them:
 - **Known person** → `People/<name>/`
 - **Unknown face** → `_Review/group_XXXX/` (with face crops in `_faces/` subfolder)
 - **No face detected** → `_Unsorted/`
 
-### Step 3 — Label new groups in Finder
+### Step 2 — Label new groups in Finder
 
 Open `_Review/` in Finder. Each `group_XXXX/` folder is a cluster of photos that appear to show the same unknown person. Look at the `_faces/` subfolder inside each group for cropped face thumbnails to help you identify them.
 
@@ -117,7 +110,7 @@ _Review/group_0002/  →  _Review/Bob/
 
 Leave any `group_XXXX/` folders you haven't decided on yet — they'll be skipped on commit.
 
-### Step 4 — Commit
+### Step 3 — Commit
 ```bash
 .venv/bin/python -m sorter.cli commit
 ```
@@ -128,7 +121,7 @@ For each renamed group:
 
 Unlabeled `group_XXXX/` folders are left untouched for next time.
 
-### Step 5 — Repeat
+### Step 4 — Repeat
 
 On the next run, photos of people you've already labeled go straight to `People/<name>/` with no review step needed.
 
@@ -136,31 +129,31 @@ On the next run, photos of people you've already labeled go straight to `People/
 
 ## Commands
 
-### `scan [INPUT_DIR] [--apply] [--force] [--recursive]`
+### `scan [INPUT_DIR] [--dry-run] [--force] [--recursive]`
 
 | Argument | Description |
 |---|---|
 | `INPUT_DIR` | Override the input directory from config (optional) |
-| `--apply` | Actually place files; without it, only a summary is printed |
+| `--dry-run` | Preview only — print summary without placing any files |
 | `--force` | Re-process files even if already processed |
 | `--recursive` | Include files in subfolders of the input directory |
 
 ```bash
-# Dry run on config input_dir
+# Scan config input_dir
 .venv/bin/python -m sorter.cli scan
 
-# Dry run on a specific folder
+# Scan a specific folder
 .venv/bin/python -m sorter.cli scan ~/Downloads/Photos
 
-# Apply
-.venv/bin/python -m sorter.cli scan --apply
-.venv/bin/python -m sorter.cli scan ~/Downloads/Photos --apply
+# Preview only — nothing written
+.venv/bin/python -m sorter.cli scan --dry-run
+.venv/bin/python -m sorter.cli scan ~/Downloads/Photos --dry-run
 
-# Apply including subfolders
-.venv/bin/python -m sorter.cli scan --apply --recursive
+# Including subfolders
+.venv/bin/python -m sorter.cli scan --recursive
 
 # Re-process everything from scratch
-.venv/bin/python -m sorter.cli scan --apply --force
+.venv/bin/python -m sorter.cli scan --force
 ```
 
 Runs are **idempotent** — files already processed (tracked by content hash) are skipped even if renamed or duplicated. Use `--force` to override this.
@@ -185,7 +178,7 @@ Scans `_Review/` for unlabeled `group_XXXX/` folders and moves any with ≤ N ph
 
 Always moves files out of `_Review/` into their destination (`People/<name>/` or `_Unsorted/`). Photos that cannot be processed are left in `_Review/` untouched.
 
-### `delete-person <name> [--keep-files]`
+### `delete-person <--name NAME | --id N> [--keep-files]`
 
 ```bash
 # Remove person from DB and delete their People/<name>/ folder
@@ -197,9 +190,9 @@ Always moves files out of `_Review/` into their destination (`People/<name>/` or
 .venv/bin/python -m sorter.cli delete-person --id 3 --keep-files
 ```
 
-Removes a person completely: deletes their embeddings and person record from the database, and re-queues their photos so the next `scan --apply` picks them up again as unknowns. By default also deletes `People/<name>/`; use `--keep-files` to leave it.
+Removes a person completely: deletes their embeddings and person record from the database, and re-queues their photos so the next `scan` picks them up again as unknowns. By default also deletes `People/<name>/`; use `--keep-files` to leave it.
 
-Requires typing the exact person name to confirm before anything is deleted.
+Prompts `Delete this person? [y/N]` before anything is deleted.
 
 ### `list-people`
 
@@ -314,5 +307,5 @@ EXIF orientation is applied automatically, so sideways phone photos are handled 
 - **A review group is someone already committed:** rename the group to the existing person's name. `commit` merges their embeddings into the existing person record, improving future recognition.
 - **Multiple people in a photo:** the photo is routed to the folder of the largest (most prominent) face. The other faces are still recorded for recognition — those people become recognisable in other photos.
 - **Originals are never moved** unless you set `placement: move`. Everything in `People/` and `_Review/` is a clone or copy.
-- **Run `status` after `scan --apply`** to see a quick summary of what's waiting in review before opening Finder.
-- **Incorrect person / want to start over:** use `delete-person <name>` to wipe their embeddings and re-queue their photos. On the next scan they'll appear in `_Review/` as unknowns again.
+- **Run `status` after `scan`** to see a quick summary of what's waiting in review before opening Finder.
+- **Incorrect person / want to start over:** use `delete-person <name>` to wipe their embeddings and re-queue their photos. On the next `scan` they'll appear in `_Review/` as unknowns again.

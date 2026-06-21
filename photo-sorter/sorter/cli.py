@@ -21,8 +21,8 @@ def main():
     scan_p = sub.add_parser("scan", help="Detect and route photos")
     scan_p.add_argument("input_dir", nargs="?", default=None,
                         help="Input directory (overrides config)")
-    scan_p.add_argument("--apply", action="store_true",
-                        help="Actually place files (default is dry run)")
+    scan_p.add_argument("--dry-run", action="store_true",
+                        help="Preview only — do not place any files")
     scan_p.add_argument("--force", action="store_true",
                         help="Re-process files even if already processed")
     scan_p.add_argument("--recursive", action="store_true",
@@ -59,7 +59,7 @@ def main():
         if not os.path.isdir(input_dir):
             print(f"ERROR: input directory does not exist: {input_dir}", file=sys.stderr)
             sys.exit(1)
-        run_scan(cfg, input_dir, apply=args.apply, force=args.force, recursive=args.recursive)
+        run_scan(cfg, input_dir, apply=not args.dry_run, force=args.force, recursive=args.recursive)
 
     elif args.command == "commit":
         run_commit(cfg)

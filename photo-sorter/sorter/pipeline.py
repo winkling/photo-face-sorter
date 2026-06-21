@@ -97,7 +97,7 @@ def run_scan(cfg: dict, input_dir: str, apply: bool, force: bool = False, recurs
     for i, gid in group_map.items():
         group_counts[gid] = group_counts.get(gid, 0) + 1
 
-    print(f"\n=== Scan summary ({'DRY RUN' if not apply else 'APPLYING'}) ===")
+    print(f"\n=== Scan summary ({'DRY RUN — no files placed' if not apply else 'APPLYING'}) ===")
     print(f"  Images found:   {total}")
     print(f"  Skipped:        {skipped} (already processed)")
     print(f"  Auto-sorted:    {len(known)} (known people)")

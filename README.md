@@ -45,19 +45,13 @@ input_dir: "~/Pictures/Incoming"
 
 All commands are run from inside the `photo-sorter/` directory.
 
-### 1. Dry run — preview before writing anything
+### 1. Scan and place files
 
 ```bash
 .venv/bin/python -m sorter.cli scan ~/Pictures/Incoming
 ```
 
-Prints a summary: how many photos match known people, how many new groups were found, how many have no face. Nothing is written to disk.
-
-### 2. Apply — detect and place files
-
-```bash
-.venv/bin/python -m sorter.cli scan ~/Pictures/Incoming --apply
-```
+Add `--dry-run` to preview without writing anything.
 
 Each photo is routed to one of:
 
@@ -70,7 +64,7 @@ Each photo is routed to one of:
 
 Each `_Review/group_XXXX/` folder contains the photos plus a `_faces/` subfolder of cropped face thumbnails to help you identify who it is.
 
-### 3. Label new groups in Finder
+### 2. Label new groups in Finder
 
 Open `_Review/` in Finder and work through the `group_XXXX/` folders:
 
@@ -100,7 +94,7 @@ _Review/group_0004/  →  _Review/_unsorted 2/
 
 Unlabeled `group_XXXX/` folders are skipped and left for next time.
 
-### 4. Commit
+### 3. Commit
 
 ```bash
 .venv/bin/python -m sorter.cli commit
@@ -112,7 +106,7 @@ For each renamed group:
 - Moves photos into `People/<name>/`
 - Cleans up the `_Review/<name>/` folder
 
-### 5. Repeat
+### 4. Repeat
 
 On the next scan, photos of already-labeled people route straight to `People/<name>/` — no review needed.
 
@@ -122,7 +116,7 @@ On the next scan, photos of already-labeled people route straight to `People/<na
 
 | Command | Description |
 |---|---|
-| `scan [DIR] [--apply] [--force] [--recursive]` | Detect and route photos |
+| `scan [DIR] [--dry-run] [--force] [--recursive]` | Detect and route photos |
 | `commit` | Enroll labeled review groups |
 | `prune [--max-size N]` | Move small unlabeled groups to `_Unsorted/` |
 | `list-people` | List all enrolled people with embedding counts |
